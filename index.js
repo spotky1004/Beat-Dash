@@ -28,7 +28,7 @@ $(function (){
       audio.play();
       audio = new Audio('Song/main.mp3');
       backgroundSound = setInterval( function (){
-        /* audio.play(); */
+        audio.play();
       }, 3000);
       gameStarted = true;
       $('#gameMainScreen').attr({
