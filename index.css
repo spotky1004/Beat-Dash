@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  font-family: 'Oswald', sans-serif;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+@keyframes hudRotation {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+@keyframes goGone {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes goApper {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+#gameMainScreen {
+  padding: 15vh 0 45vh 0;
+  width: 100vw; height: 40vh;
+  background: repeating-linear-gradient(90deg, #a3e2e3, #a3e2e3 5vw, #7ebebf 5vw, #f0edcc 8vw, #f0edcc 10vw, #e3a3df 10vw, #e3a3df 15vw, #bf7ebb 15vw, #f0edcc 18vw, #f0edcc 20vw);
+  animation: backgroundMove 10s linear infinite;
+}
+@keyframes backgroundMove {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: 200vh;
+  }
+}
+#gameTitle {
+  width: 90vw;
+  font-size: 9vh; text-align: center;
+  animation: titlePulse 1s linear infinite alternate, hoveringEffect 5s ease infinite alternate;
+}
+#gameTitle > span {
+  margin-left: 15vw;
+  animation: titlePulse 1s linear infinite alternate;
+}
+@keyframes titlePulse {
+  from {
+    color: #e0d87e;
+    text-shadow: 0 0 7px #aaa, 0 0 7px #aaa, 0 0 7px #aaa;
+  }
+  50% {
+    color: #fff;
+    text-shadow: 0 0 15px #fff, 0 0 15px #fff, 0 0 15px #fff;
+  }
+  60% {
+    color: #e0d87e;
+    text-shadow: 0 0 7px #aaa, 0 0 7px #aaa, 0 0 7px #aaa;
+  }
+  to {
+    color: #e0d87e;
+    text-shadow: 0 0 7px #aaa, 0 0 7px #aaa, 0 0 7px #aaa;
+  }
+}
+#startButton {
+  margin-top: 15vh;
+  width: 100vw; height: 7vh;
+  text-align: center;
+  color: #de5954; font-size: 5vh; text-shadow: 0 0 7px #aaa, 0 0 7px #aaa, 0 0 7px #aaa;
+  animation: hudRotation 10s linear infinite, hoveringEffect 1.3s ease infinite alternate;
+  cursor: pointer;
+}
+@keyframes hoveringEffect {
+  from {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+#gameLoading {
+  padding-top: 45vh;
+  width: 100vw; height: 10vh;
+  background-color: #4d4d4d;
+  text-align: center;
+}
+.loader {
+  margin: 0 auto;
+  border: 1vh solid #f3f3f3;
+  border-top: 1vh solid #757575;
+  border-radius: 50%;
+  width: 7.5vh;
+  height: 7.5vh;
+  animation: spin 2s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+#gameLevelSelect {
+  width: 100vw; height: 100vh;
+  background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=000000ff&noise=2e2e2e&density=25&opacity=55);
+}
+.stageBlock {
+  display: block; float: left;
+  width: 10vh; height: 10vh;
+  background-image: url(Image/Bridge/1111.png); background-size: 10vh 10vh; background-repeat: no-repeat;
+}
+.stageBlcokImg {
+  margin: 1.5vh;
+  width: 7vh; height: 7vh;
+  background-color: #777;
+  border-radius: 7px;
+}
+.stageBlcokImg:not(.stageLocked):hover {
+  transform: scale(1.2);
+  filter: brightness(1.2);
+}
+.stageBlcokImg:not(.stageLocked):active {
+  transform: scale(1.1);
+  filter: brightness(1.5);
+}
+.stageBlcokImg.stageLocked:hover {
+  transform: scale(1.05);
+}
+.stageBlcokImg.stageLocked {
+  border: 5px solid #474640;
+  opacity: 0.3;
+}
+.stageBlcokImg.stageOpened {
+  border: 5px solid #e3d99d;
+}
+.stageBlcokImg.stageCompeleted {
+  border: 5px solid #9de3ad;
+}
+.stageBlcokImg.perfectCompeleted {
+  border: 5px solid #9de3e0;
+}
+.stageBlcokImg.speedCompeleted {
+  border: 5px solid #e39d9d;
+}
+.stageBlcokImg.masterCompeleted {
+  border: 5px solid #e39dd2;
+}
