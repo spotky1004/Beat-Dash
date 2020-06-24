@@ -19,7 +19,7 @@ $(function (){
     tickNow++;
   }, 33);
   setInterval( function () {
-    $('#gameLevelSelect').css('background-image', 'url(http://api.thumbr.it/whitenoise-361x370.png?background=2b2b2bff&noise=525252&density=' + ((tickNow%17)/5+21) + '&opacity=55)');
+    $('#gameLevelSelect').css('background-image', 'url(https://api.thumbr.it/whitenoise-361x370.png?background=2b2b2bff&noise=525252&density=' + ((tickNow%17)/5+21) + '&opacity=55)');
   }, 200);
 
   $(document).on('click','#startButton',function() {
