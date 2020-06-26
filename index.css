@@ -111,7 +111,8 @@
 }
 #gameLevelSelect {
   width: 100vw; height: 100vh;
-  background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=000000ff&noise=2e2e2e&density=25&opacity=55);
+  background: linear-gradient(135deg, rgba(255,255,255,1) 0%,rgba(168,241,244,1) 50%,rgba(240,198,242,1) 51%,rgba(234,234,234,1) 100%);
+  /* background-image: url(http://api.thumbr.it/whitenoise-361x370.png?background=000000ff&noise=2e2e2e&density=25&opacity=55); */
 }
 .stageBlock {
   display: block; float: left;
@@ -121,15 +122,15 @@
 .stageBlcokImg {
   margin: 1.5vh;
   width: 7vh; height: 7vh;
-  background-color: #777;
+  background-color: #777; background-size: 7vh 7vh;
   border-radius: 7px;
 }
 .stageBlcokImg:not(.stageLocked):hover {
-  transform: scale(1.2);
+  transform: scale(1.2) rotate(3deg);
   filter: brightness(1.2);
 }
 .stageBlcokImg:not(.stageLocked):active {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(-360deg);
   filter: brightness(1.5);
 }
 .stageBlcokImg.stageLocked:hover {
@@ -153,4 +154,72 @@
 }
 .stageBlcokImg.masterCompeleted {
   border: 5px solid #e39dd2;
+}
+#levelDialogBg {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(80, 80, 80, 0.4);
+}
+#levelDialog {
+  position: absolute;
+  left: 30vw; top: 30vh;
+  width: 40vw; height: 40vh;
+  border: 4px solid #222; border-radius: 15px;
+  animation: dialogApper 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  background-color: #666;
+  color: white;
+  transform: scale(0);
+}
+@keyframes dialogApper {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+#dialogTopLayer {
+  width: 40vw; height: 6vh;
+  border-bottom: 4px solid #222;
+}
+#levelDialogName {
+  display: block; float: left;
+  padding: 1vh 0 0 1vw;
+  width: 34vw; height: 5vh;
+  font-size: 3vh; text-shadow: 2px 2px 0.5px #111;
+  background-color: #999;
+}
+#closeDialog {
+  display: block; float: left;
+  width: 5vw; height: 7vh;
+  font-size: 4vh; color: #e03f3f; text-shadow: 2px 2px 0.5px #111; text-align: center;
+  background-color: #e6a5a5;
+  cursor: pointer;
+}
+#closeDialog:hover {
+  filter: brightness(1.4);
+}
+#levelDialogGrade {
+  padding: 0.5vh 0 0 1vw;
+  width: 40vw; height: 3.5vh;
+  font-size: 2vh; color: #fff; text-shadow: 2px 2px 0.5px #111;
+  background-color: #999;
+  cursor: pointer;
+  border-bottom: 4px solid #222;
+}
+#stageStartButton {
+  position: absolute;
+  left: 31vw; top: 32vh;
+  padding-left: 0.5vh;
+  width: 6vw; height: 6.5vh;
+  font-size: 4vh; text-shadow: 1px 1px 0.5px #111; text-align: center;
+  border: 4px solid #bda242;
+  box-shadow: 5px 5px 2px #111;
+  background: linear-gradient(135deg, rgba(252,234,187,1) 0%,rgba(252,205,77,1) 50%,rgba(248,181,0,1) 51%,rgba(251,223,147,1) 100%);
+  cursor: pointer;
+  animation: hoveringEffect 5s ease infinite alternate;
+}
+#stageStartButton:hover {
+  filter: brightness(1.3);
 }
