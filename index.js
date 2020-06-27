@@ -1,7 +1,10 @@
 $(function (){
   tickNow = 0;
   stageSelected = 0;
+  counterNum = 3;
+  gameTick = 0;
   gameStarted = false;
+  levelStarted = false;
 
   function markStage() {
     for (var i = 0; i < 81; i++) {
@@ -29,6 +32,28 @@ $(function (){
   function closeDialog() {
     $('#levelDialog').hide();
     $('#levelDialogBg').hide();
+  }
+  function levelStart() {
+    for (var i = 0; i < 3; i++) {
+      setTimeout ( function () {
+        counterNum--;
+        $('#counter').html(function (index,html) {
+          return counterNum;
+        });
+        if (counterNum == 0) {
+          $('#counter').hide();
+        }
+      }, 500*i);
+    }
+    setTimeout( function (){
+      gameTick = 0;
+      gameLoop = setInterval (function () {
+        gameTick++;
+        $('.node').each(function(index) {
+          $(this).css('left', (6.6666*index-gameTick) + 'vh')
+        });
+      }, 50);
+    }, (1500+240000*levelData[stageSelected-1][0][1][0]/levelData[stageSelected-1][0][0]));
   }
 
   setInterval( function () {
@@ -85,6 +110,41 @@ $(function (){
     stageSelected = 0;
     closeDialog();
   });
+  $(document).on('click','#stageStartButton',function() {
+    counterNum = 3;
+    $('#counter').html(function (index,html) {
+      return '3';
+    });
+    if (!levelStarted) {
+      $('#gameLevelSelect').attr({
+        'style' : 'animation: goGone 1.5s linear forwards;'
+      });
+      setTimeout( function (){
+        $('#gameLevelSelect').hide();
+        $('#gameLoading').show();
+        $('#gameLoading').attr({
+          'style' : 'animation: goApper 1.5s linear forwards;'
+        });
+        setTimeout( function (){
+          $('#gameLoading').attr({
+            'style' : 'animation: goGone 1.5s linear forwards;'
+          });
+          setTimeout( function (){
+            $('#gameLoading').hide();
+            $('#mainGameScreen').show();
+            $('#mainGameScreen').attr({
+              'style' : 'animation: goApper .5s linear forwards;'
+            });
+            setTimeout( function (){
+              $('#counter').show();
+              levelStart();
+            }, 500);
+          }, 1700);
+        }, 2500);
+      }, 1700);
+    }
+    levelStarted = true;
+  });
 
   for (var i = 0; i < 9; i++) {
     $('<div>').addClass('stageLine').appendTo('#levelBlocks');
@@ -92,6 +152,12 @@ $(function (){
   for (var i = 0; i < 81; i++) {
     $('<span>').addClass('stageBlcok' + i).addClass('stageBlock').appendTo('.stageLine:eq(' + Math.floor(i/9) + ')');
     $('<div>').addClass('stageBlcokImg').appendTo('.stageBlcok' + i);
+  }
+  for (var i = 0; i < 50; i++) {
+    $('<span>').addClass('node').addClass('node' + i).css('left', (6.6666*i) + 'vh').appendTo('#gameNode');
+    for (var j = 0; j < 9; j++) {
+      $('<div>').addClass('block').addClass('block1').addClass('block' + i + 'x' + j).appendTo('.node' + i);
+    }
   }
   markStage();
 });
