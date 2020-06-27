@@ -22,6 +22,9 @@ $(function (){
   function openDialog() {
     $('#levelDialog').show();
     $('#levelDialogBg').show();
+    $('#levelDialogName').html(function (index,html) {
+      return 'Stage ' + stageSelected + ' - ' + stageName[stageSelected-1];
+    });
   }
   function closeDialog() {
     $('#levelDialog').hide();
@@ -73,9 +76,8 @@ $(function (){
   });
   $(document).on('click','.stageBlcokImg',function() {
     indexThis = $('.stageBlcokImg').index(this);
-    stageSelected = indexThis;
-    console.log(stageSelected);
-    if (levelOpened[stageSelected] >= 1) {
+    stageSelected = leverPointer[indexThis];
+    if (levelOpened[indexThis] >= 1) {
       openDialog();
     }
   });
