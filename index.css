@@ -269,6 +269,7 @@
   width: 6.6666vh; height: 6.6666vh;
   background-image: url(Image/Player.png); background-size: 6.6666vh 6.6666vh;
   z-index: 10;
+  transition: all 0s;
 }
 #gameNode {
   white-space: nowrap;
@@ -277,9 +278,12 @@
   position: absolute;
   display: block; float: left;
   width: 6.6666vh; height: 60vh;
+
+  transition: all 0s;
 }
 .block {
   width: 6.6666vh; height: 6.6666vh;
+
 }
 .block1 {
   background: linear-gradient(135deg, rgba(185,196,206,1) 0%,rgba(63,63,63,1) 49%,rgba(40,40,40,1) 51%,rgba(119,119,119,1) 99%);
