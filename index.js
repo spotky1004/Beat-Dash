@@ -12,6 +12,12 @@ $(function (){
   keyToggle = [0, 0, 0, 0];
   playerX = 0;
   playerY = 0;
+  thisLevelData = 0;
+  lStart = 0;
+  aChunk = [];
+  pScore = 0;
+  levelInter1 = 0;
+  levelInter2 = 0;
   timeNow = new Date().getTime();
   lastTick = new Date().getTime();
 
@@ -59,19 +65,74 @@ $(function (){
   }
 
   function levelStart(levelNow) {
+    closeDialog();
     playerKeyShift = [0, 0, 0, 0];
     levelNow--;
     thisLevelData = levelData[levelNow];
+    lStart = new Date().getTime();
+    setMapArr();
+    renderLevel();
     $('#gameTopLayer > span:eq(0)').html(function (index,html) {
       return 'Stage - ' + (levelNow+1);
     });
     $('#gameTopLayer > span:eq(1)').html(function (index,html) {
-      return stageName[levelNow] + ' / ' + thisLevelData[0][0] + ' BPM';
+      return stageName[levelNow] + ' / ' + lBPM + ' BPM';
     });
+    playerY = 5;
+    pScore = 100;
+    for (var i = 0; i < 4; i++) {
+      setTimeout ( function () {
+        counterNum--;
+        $('#counter').html(function (index,html) {
+          return counterNum;
+        });
+        if (counterNum == -1) {
+          $('#counter').hide();
+          lStart = new Date().getTime();
+        }
+      }, 500*(i+1));
+    }
+    setTimeout( function () {
+      // set Nodes moving & vars
+      tLast = new Date().getTime();
+      $.keyframe.define([{
+  	    name: 'goLeft',
+        from: {
+          'transform' : 'translateX(0)'
+        },
+        to: {
+          'transform' : 'translateX(-' + 6.6666*thisLevelData[0][2] + 'vh)'
+        }
+      }]);
+      $('#innerNode').playKeyframe (
+        'goLeft ' + thisLevelData[0][2]/(lBPM/60) + 's linear infinite',
+      );
+      pSpeed = 0;
+      renderLevel();
+      // game loop
+      levelInter1 = setInterval( function () {
+        setLevelVar();
+        tGain = (tNow-tLast)/1000;
+        playerMove();
+        playerCollision();
+        $('#gameTopLayer > span:eq(2)').html(function (index,html) {
+          return pScore.toFixed(2) + '%';
+        });
+        tLast = tNow;
+        if (fNode > thisLevelData[1].length+thisLevelData[0][1]) {
+          levelCompelete(levelNow);
+        }
+      }, 15);
+      // render level
+      levelInter2 = setInterval( function () {
+        renderLevel();
+      }, thisLevelData[0][2]/(lBPM/60)*1000);
+    }, 2000);
+    /*
     linePerNode = levelData[levelNow][0][2];
     maxNode = Math.floor(50/linePerNode);
-    for (var i = thisLevelData[0][1][0]; i < maxNode+1; i++) {
-      pushedChunk = pushArrayBy(chunkGens[linePerNode-1][thisLevelData[1][i-thisLevelData[0][1][0]][0]], thisLevelData[1][i][1]*linePerNode);
+    for (var i = thisLevelData[0][1]; i < maxNode+1; i++) {
+      pushedChunk = pushArrayBy(chunkGens[linePerNode-1][thisLevelData[1][i-thisLevelData[0][1]][0]], thisLevelData[1][i][1]*linePerNode);
       for (var j = 0; j < linePerNode*9; j++) {
         indexThis = ((j%9*linePerNode)+Math.floor(j/9))+i*linePerNode*9;
         $('.block:eq(' + (j+i*linePerNode*9) + ')').addClass('block' + (pushedChunk[((j%9*linePerNode)+Math.floor(j/9))]));
@@ -119,7 +180,7 @@ $(function (){
         cChunk = [];
         for (var i = 0; i < 3; i++) {
           cChunkO = [];
-          chunkNumO = Math.floor(i-thisLevelData[0][1][0]-1+lNode-1/thisLevelData[0][2]);
+          chunkNumO = Math.floor(i-thisLevelData[0][1]-1+lNode-1/thisLevelData[0][2]);
           if (0 <= chunkNumO) {
             chunkScan = thisLevelData[1][chunkNumO];
             cChunkO = pushArrayBy(chunkGens[linePerNode-1][chunkScan[0]], linePerNode*chunkScan[1]);
@@ -138,6 +199,180 @@ $(function (){
         lastTick = timeNow;
       }, 15);
     }, 1500);
+    */
+  }
+  function setLevelVar() {
+    tNow = new Date().getTime();
+    tSpent = (tNow-lStart)/1000;
+    lBPN = thisLevelData[0][2];
+    lBPM = thisLevelData[0][0];
+    lNode = thisLevelData[0][1]+thisLevelData[1].length;
+    tBeat = lBPM/60*tSpent;
+    tNode = tBeat/thisLevelData[0][2];
+    fBeat = Math.floor(tBeat);
+    fNode = Math.floor(tNode);
+    f2Node = Math.floor(tNode+0.5);
+    mNode = Math.floor(50/thisLevelData[0][2]);
+  }
+  function setMapArr() {
+    setLevelVar();
+    // make arr to render & player collision
+    aChunk = [];
+    for (var i = 0; i < thisLevelData[0][1]+thisLevelData[1].length+35; i++) {
+      if (i == 0) {
+        // start fill node
+        for (var j = 0; j < 36; j++) {
+          aChunk.push(0);
+        }
+      } else if (i < thisLevelData[0][1]) {
+        // offset node
+        for (var j = 0; j < 9*lBPN; j++) {
+          aChunk.push(0);
+        }
+      } else if (i < thisLevelData[1].length+thisLevelData[0][1]) {
+        // main node
+        pushedArr = pushArrayBy(chunkGens[lBPN-1][thisLevelData[1][i-thisLevelData[0][1]][0]], lBPN*thisLevelData[1][i-thisLevelData[0][1]][1]);
+        for (var j = 0; j < 9*lBPN; j++) {
+          aChunk.push(pushedArr[(j%9)*lBPN+Math.floor(j/9)]);
+        }
+      } else {
+        // end fill node
+        for (var j = 0; j < 9*lBPN; j++) {
+          aChunk.push(0);
+        }
+      }
+    }
+  }
+  function renderLevel() {
+    setLevelVar();
+    $('.block').removeClass('block1');
+    for (var i = 0; i < 450; i++) {
+      if (aChunk[9*lBPN*f2Node-36+i] == 1) {
+        $('.block:eq(' + i + ')').addClass('block1');
+      }
+    }
+  }
+  function playerMove() {
+    playerY = Math.floor((playerY-pSpeed/(1.5**(tGain*200))*3)*1000)/1000;
+    pSpeed = Math.floor((pSpeed-pSpeed/(1.5**(tGain*200)))*1000)/1000;
+    if (playerY < 0 && pSpeed > 0) {
+      pSpeed = -0.7;
+    } else if (playerY > 9 && pSpeed < 0) {
+      pSpeed = 0.45;
+    }
+    if ((pSpeed > 0 && pSpeed <= 0.005) || (pSpeed < 0 && pSpeed >= -0.005)) {
+      playerY = Math.round(playerY);
+      pSpeed = 0;
+    }
+    $('#player').css('top', (1.3333+playerY*6.6666) + 'vh');
+  }
+  function playerCollision() {
+    if ((aChunk[9*Math.ceil(tBeat+1)-9+Math.ceil(playerY)] == 1 || aChunk[9*Math.floor(tBeat+1)-9+Math.ceil(playerY)] == 1) && (0 < playerY && playerY < 9)) {
+      pScore -= 100*tGain/Math.sqrt(thisLevelData[1].length);
+    }
+    if (pScore < 0) {
+      pScore = 0;
+      levelFail();
+    }
+  }
+  function levelFail() {
+    $.keyframe.define([{
+      name: 'gameOver',
+      from: {
+        'filter' : 'brightness(1)'
+      },
+      '20%': {
+        'filter' : 'brightness(1)'
+      },
+      to: {
+        'filter' : 'brightness(0)'
+      }
+    }]);
+    $('#mainGameScreen').playKeyframe (
+      'gameOver 1s ease forwards',
+    );
+    setTimeout( function () {
+      $('#mainGameScreen').attr({
+        'style' : 'animation: goGone 1.5s linear forwards, gameOver 1s ease forwards;'
+      });
+      setTimeout( function (){
+        $('#mainGameScreen').hide();
+        $('#gameLoading').show();
+        $('#gameLoading').attr({
+          'style' : 'animation: goApper 1.5s linear forwards;'
+        });
+        setTimeout( function (){
+          $('#gameLoading').attr({
+            'style' : 'animation: goGone 1.5s linear forwards;'
+          });
+          setTimeout( function (){
+            $('#gameLoading').hide();
+            $('#gameLevelSelect').show();
+            $('#gameLevelSelect').attr({
+              'style' : 'animation: goApper 1.5s linear forwards;'
+            });
+          }, 1700);
+        }, 2500);
+      }, 1700);
+    }, 1000);
+    levelEnd();
+  }
+  function levelCompelete(lNow) {
+    lNow++;
+    console.log(lNow);
+    for (var i = 0; i < leverPointer.length; i++) {
+      if (lNow == leverPointer[i]) {
+        levelOpened[i] = 2;
+      } else if ((lNow+1) == leverPointer[i]) {
+        levelOpened[i] = 1;
+      }
+    }
+    $.keyframe.define([{
+      name: 'gameOver',
+      from: {
+        'filter' : 'brightness(1)'
+      },
+      '20%': {
+        'filter' : 'brightness(1)'
+      },
+      to: {
+        'filter' : 'brightness(1.5)'
+      }
+    }]);
+    $('#mainGameScreen').playKeyframe (
+      'gameOver 3s ease forwards',
+    );
+    setTimeout( function () {
+      $('#mainGameScreen').attr({
+        'style' : 'animation: goGone 1.5s linear forwards, gameOver 1s ease forwards;'
+      });
+      setTimeout( function (){
+        $('#mainGameScreen').hide();
+        $('#gameLoading').show();
+        $('#gameLoading').attr({
+          'style' : 'animation: goApper 1.5s linear forwards;'
+        });
+        setTimeout( function (){
+          $('#gameLoading').attr({
+            'style' : 'animation: goGone 1.5s linear forwards;'
+          });
+          setTimeout( function (){
+            $('#gameLoading').hide();
+            $('#gameLevelSelect').show();
+            $('#gameLevelSelect').attr({
+              'style' : 'animation: goApper 1.5s linear forwards;'
+            });
+          }, 1700);
+        }, 2500);
+      }, 1700);
+    }, 3000);
+    markStage();
+    levelEnd();
+  }
+  function levelEnd() {
+    clearInterval(levelInter1);
+    clearInterval(levelInter2);
+    levelStarted = false;
   }
 
   setInterval( function () {
@@ -165,9 +400,9 @@ $(function (){
 
   $(document).on('click','#startButton',function() {
     if (!gameStarted) {
-      audio = new Audio('Song/play button.mp3');
+      audio = new Audio('sound/play button.mp3');
       audio.play();
-      audio = new Audio('Song/main.mp3');
+      audio = new Audio('sound/main.mp3');
       backgroundSound = setInterval( function (){
         /* audio.play(); */
       }, 3000);
@@ -252,7 +487,7 @@ $(function (){
     $('<div>').addClass('stageBlcokImg').appendTo('.stageBlcok' + i);
   }
   for (var i = 0; i < 50; i++) {
-    $('<span>').addClass('node').addClass('node' + i).css('left', (6.6666*i) + 'vh').appendTo('#gameNode');
+    $('<span>').addClass('node').addClass('node' + i).css('left', (6.6666*i) + 'vh').appendTo('#innerNode');
     for (var j = 0; j < 9; j++) {
       $('<div>').addClass('block').appendTo('.node' + i);
     }

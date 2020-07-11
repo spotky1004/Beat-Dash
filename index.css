@@ -41,7 +41,7 @@
     background-position: 0;
   }
   to {
-    background-position: 200vh;
+    background-position: 100vw;
   }
 }
 #gameTitle {
@@ -274,6 +274,9 @@
 #gameNode {
   white-space: nowrap;
 }
+#innerNode {
+  width: 500vw; height: 100vh;
+}
 .node {
   position: absolute;
   display: block; float: left;
@@ -283,13 +286,12 @@
 }
 .block {
   width: 6.6666vh; height: 6.6666vh;
-
 }
 .block1 {
   background: linear-gradient(135deg, rgba(185,196,206,1) 0%,rgba(63,63,63,1) 49%,rgba(40,40,40,1) 51%,rgba(119,119,119,1) 99%);
 }
 #counter {
-  position: relative;
+  position: absolute;
   width: 100vw; height: 13vh;
   font-size: 10vh; text-shadow: 2px 2px 1px #333; text-align: center;
   z-index: 15;
